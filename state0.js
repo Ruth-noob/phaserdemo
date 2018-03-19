@@ -4,35 +4,67 @@ var hero,cursors,speed=10;
 var centerX=1500/2,centerY=1000/2;
 demo.state0.prototype = {
     preload:function(){
-        game.load.image('hero','assets/hero.png');
+        game.load.spritesheet('hero','assets/herosp.png',260,500);
+        game.load.image('bg','assets/bg.png');
+
         
     },
     
     create:function(){
+        game.physics.startSystem(Phaser.Physics.ARCADE);
         console.log('state0');
         game.stage.backgroundColor = 'FF0000';
         addChangeStateEventListners();
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        game.world.setBounds(0,0,2813,1000);
         
+        
+        
+         var bg = game.add.sprite(0,0,'bg');
         //hero
          hero = game.add.sprite(centerX,centerY,'hero');
+        
         hero.anchor.setTo(0.5,0.5);
+        hero.scale.setTo(0.7,0.7);
         cursors = game.input.keyboard.createCursorKeys();
+        game.physics.enable(hero);
+        hero.body.collideWorldBounds = true;
+        
+         hero.animations.add('walk',[0,1,2,3]);
+        game.camera.follow(hero);
+        game.camera.deadzone = new Phaser.Rectangle(centerX - 300,0,600,1000);
+        
+       
     },
     
     update:function(){
         if(cursors.up.isDown)
-            hero.y -= speed;
+        {hero.y -= speed;
+         if(hero.y<395)
+             hero.y=395;
+        
+        }
         
         else if(cursors.down.isDown)
-            hero.y += speed;
+        {hero.y += speed;}
+       
         
          if(cursors.left.isDown)
-            hero.x -= speed;
-        
+         {hero.x -= speed;
+           hero.animations.play('walk',15,true);
+          hero.scale.setTo(-0.7,0.7);}
         
         else if(cursors.right.isDown)
-            hero.x += speed;
+        { hero.x += speed;
+          hero.animations.play('walk',15,true);
+          hero.scale.setTo(0.7,0.7);
+        }
+        
+         
+        else {
+            hero.animations.stop('walk');
+            hero.frame = 0;
+        }
     }
     
 };
